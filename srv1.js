@@ -1,17 +1,53 @@
-// server.js
-
 const ws = require('ws')
-
 const wss = new ws.Server({ port: 8080 })
-wss.on('connection',function connection(ws, req) {
-  const ip = req.socket.remoteAddress;
-  console.log(ip)
-});
-wss.on('connection', Server => {
+//create connection array
+Connections = [];
+var ConnectionNames = []
+var stdin = process.openStdin();
 
-  ws.on('message', message => {
-    console.log(Server);
-    console.log(`Received message => ${message}`)
-  })
-  ws.send('Hello! Message From Server!!')
+
+wss.on('connection', Server => {
+ 
+ //Add the made collection to the array
+  Connections.push(Server);
+  //add event for recieving messages
+  let n = Connections.length-1;
+  ConnectionNames.push(n);
+  Connections[Connections.length-1].addEventListener('message', function(event){
+    console.log(`Received => [${n}]${ConnectionNames[n]}:${event.data}`)
+    //add nickname option
+    let nameChangevar = "-name:";
+    if(event.data.substring(0,nameChangevar.length) == nameChangevar){
+      ConnectionNames[n] = event.data.substring(nameChangevar.length).trim();
+      console.log(`player ${n} is now  ${ConnectionNames[n]}`)
+    }
+    //send each connection the message
+    sendToAll(`player ${ConnectionNames[n]}:  ${event.data}`);
+    
+  });
+  Connections[Connections.length-1].on('close', event => {
+    console.log(`Connection closed by [${n}]${ConnectionNames[n]}`)
+    sendToAll(`> ${ConnectionNames[n]} left the server`);
+    
+  });
+ 
+  Server.send('You are now connected to the server')
+
+  console.log(`Number of users: ${Connections.length}`)
+
 });
+
+//reads terminal input
+stdin.addListener("data", function(d) {
+  
+    if(Connections.length !== 0){
+      Connections.forEach(a => a.send("dm: "+d.toString().trim()));
+    }
+});
+function sendToAll(string){
+  Connections.forEach(connection => {
+    if(connection.OPEN){
+      connection.send(string)
+    }
+  });
+}
