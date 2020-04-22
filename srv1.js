@@ -29,7 +29,7 @@ wss.on('connection', Server => {
     console.log(`Connection closed by [${n}]${ConnectionNames[n]}`)
 
     sendToAll(`> ${ConnectionNames[n]} left the server`);
-    Connection.remove(n);
+    Connections.remove(n);
     ConnectionNames.remove(n);
 
     
