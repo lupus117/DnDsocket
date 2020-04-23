@@ -23,7 +23,7 @@ wss.on('connection', Server => {
       console.log(`player ${n} is now  ${ConnectionNames[n]}`)
     }
     //send each connection the message
-    sendToAll(`player ${ConnectionNames[n]}:  ${rolls.searchFornumbers(event.data)}`);
+    sendToAll(`player ${ConnectionNames[n]}:  ${rolls.searchAndRollDice(event.data)}`);
     
   });
   Connections[Connections.length-1].on('close', event => {
@@ -46,9 +46,8 @@ wss.on('connection', Server => {
 //reads terminal input
 stdin.addListener("data", function(d) {
   
-    if(Connections.length !== 0){
-      Connections.forEach(a => a.send("dm: "+d.toString().trim()));
-    }
+    sendToAll(rolls.searchAndRollDice("dm: "+d.toString().trim()));
+    
 });
 
 function sendToAll(string){

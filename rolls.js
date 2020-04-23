@@ -10,7 +10,7 @@ function rollDieXtimes(number, DieSize) {
     }
     return results;
 }
-exports.searchFornumbers = function (string) {
+exports.searchAndRollDice = function (string) {
     var tmpstr = string;
     var regex = /\d+/g;
     var matches = tmpstr.match(regex);  // creates array from matches
@@ -34,7 +34,7 @@ exports.searchFornumbers = function (string) {
                     }
                     else resultstring += element;
                 });
-                tmpstr = tmpstr.toLowerCase().replace(dice, `[${dice}=${resultstring}]${sum}`)
+                tmpstr = tmpstr.toLowerCase().replace(dice, `|[${dice}=${resultstring}]${sum}|`)
                 console.log(`rolling: ${matches[i]}d${matches[i + 1]} = ${rollDieXtimes(matches[i], matches[i + 1])}`)
 
             }
