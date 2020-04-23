@@ -1,4 +1,5 @@
 const ws = require('ws')
+const rolls = require('./rolls')
 const wss = new ws.Server({ port: 8080 })
 //create connection array
 Connections = [];
@@ -22,7 +23,7 @@ wss.on('connection', Server => {
       console.log(`player ${n} is now  ${ConnectionNames[n]}`)
     }
     //send each connection the message
-    sendToAll(`player ${ConnectionNames[n]}:  ${event.data}`);
+    sendToAll(`player ${ConnectionNames[n]}:  ${rolls.searchFornumbers(event.data)}`);
     
   });
   Connections[Connections.length-1].on('close', event => {
